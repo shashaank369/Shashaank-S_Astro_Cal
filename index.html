@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedic Astrology Sub-Lord Calculator</title>
+    <meta name="description" content="A precise, frontend-only Vedic Astrology Sub-Lord Calculator for the complete 360° zodiac based on Vimshottari Dasha system.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for Traditional Manuscript Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-border-wrapper">
+        <main class="calculator-container">
+            
+            <!-- HEADER SECTION -->
+            <header class="main-header">
+                <div class="header-ornament header-ornament-left">✦</div>
+                <div class="header-text">
+                    <h1 id="main-title">ASTROLOGY SUB LORD CALCULATOR</h1>
+                    <p class="subtitle">Nakshatra • Pada • Degree Calculation</p>
+                </div>
+                <div class="header-ornament header-ornament-right">✦</div>
+            </header>
+
+            <!-- INPUT FORM PANEL -->
+            <section class="card input-panel" aria-labelledby="form-heading">
+                <div class="card-header">
+                    <h2 id="form-heading">CLIENT & ASTROLOGICAL INPUT</h2>
+                    <span class="card-subtitle">Enter chart parameters for real-time memory calculation</span>
+                </div>
+                
+                <form id="calc-form" onsubmit="return false;" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="client-name">Client Name</label>
+                            <input type="text" id="client-name" placeholder="e.g. Maharishi Parashara" autocomplete="off">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" autocomplete="off">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rasi-select">Rasi (Zodiac Sign) <span class="required">*</span></label>
+                            <select id="rasi-select" required>
+                                <option value="">-- Select Rasi --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nakshatra-select">Nakshatra <span class="required">*</span></label>
+                            <select id="nakshatra-select" required disabled>
+                                <option value="">-- Select Nakshatra --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pada-select">Pada (Quarter) <span class="required">*</span></label>
+                            <select id="pada-select" required disabled>
+                                <option value="">-- Select Pada --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="degree-input">Degree <span class="required">*</span></label>
+                            <input type="text" id="degree-input" placeholder="e.g. 18°25′ or 18.416" required autocomplete="off">
+                            <small class="help-text">Formats: 18°25′, 18 25, or 18.416 (Total or Rasi deg)</small>
+                        </div>
+                    </div>
+
+                    <!-- ERROR CONTAINER -->
+                    <div id="error-banner" class="error-banner hidden" role="alert">
+                        <span class="error-icon">⚠️</span>
+                        <span id="error-message">Invalid combination. Please check Rasi, Nakshatra, Pada and Degree.</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="calc-btn" class="btn btn-primary">
+                            <span class="btn-icon">☸</span> CALCULATE SUB-LORD
+                        </button>
+                        <button type="button" id="reset-btn" class="btn btn-secondary">
+                            RESET
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RESULTS SECTION -->
+            <section id="results-section" class="results-section hidden" aria-live="polite">
+                
+                <div class="results-header-banner">
+                    <h2>CALCULATION RESULT</h2>
+                    <p>Continuous Vimshottari Sub-Lord Analysis</p>
+                </div>
+
+                <div class="results-grid">
+                    <!-- CLIENT & ASTROLOGICAL SUMMARY -->
+                    <div class="card result-card">
+                        <div class="card-header border-orange">
+                            <h3>CLIENT & ASTROLOGICAL DETAILS</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="details-table">
+                                <tr>
+                                    <th>Client Name:</th>
+                                    <td id="res-client-name" class="highlight-navy">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Date of Birth:</th>
+                                    <td id="res-dob" class="highlight-navy">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Rasi:</th>
+                                    <td id="res-rasi" class="highlight-terracotta">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Nakshatra:</th>
+                                    <td id="res-nakshatra" class="highlight-terracotta">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Pada:</th>
+                                    <td id="res-pada" class="highlight-terracotta">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Input Degree:</th>
+                                    <td id="res-input-degree" class="highlight-navy">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Nakshatra Lord:</th>
+                                    <td id="res-nakshatra-lord" class="highlight-green font-bold">-</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUB LORD CALCULATION DETAILS -->
+                    <div class="card result-card">
+                        <div class="card-header border-orange">
+                            <h3>SUB-LORD COMPUTATION</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="sublord-badge-container">
+                                <span class="sublord-label">EXACT SUB LORD</span>
+                                <div id="res-sub-lord" class="sublord-badge">---</div>
+                            </div>
+                            <table class="details-table margin-top">
+                                <tr>
+                                    <th>Planetary Years:</th>
+                                    <td id="res-planetary-years">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Formula Calculation:</th>
+                                    <td id="res-calculation-formula" class="font-mono">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Sub-Lord Duration:</th>
+                                    <td id="res-duration-months">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Equivalent Days:</th>
+                                    <td id="res-duration-days">-</td>
+                                </tr>
+                                <tr>
+                                    <th>Remaining in Sub-Lord:</th>
+                                    <td id="res-remaining-duration" class="highlight-green font-bold">-</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- DEGREE SPAN DETAILS -->
+                    <div class="card result-card full-width">
+                        <div class="card-header border-orange">
+                            <h3>DEGREE BOUNDARIES & SPAN</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="degree-span-grid">
+                                <div class="degree-box">
+                                    <span class="deg-title">Sub-Lord Start Degree</span>
+                                    <span id="res-degree-start" class="deg-value">-</span>
+                                </div>
+                                <div class="degree-box active">
+                                    <span class="deg-title">Client Exact Position</span>
+                                    <span id="res-degree-exact" class="deg-value highlight-red">-</span>
+                                </div>
+                                <div class="degree-box">
+                                    <span class="deg-title">Sub-Lord End Degree</span>
+                                    <span id="res-degree-end" class="deg-value">-</span>
+                                </div>
+                            </div>
+                            <p class="span-info-note">
+                                ℹ️ Note: 1 Nakshatra (13°20′) = 64 months = 800 arcminutes. 1 month = 12.5 arcminutes (0°12′30″).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPLETE SUB LORD SEQUENCE FOR SELECTED NAKSHATRA -->
+                <div class="card sequence-card">
+                    <div class="card-header">
+                        <h3>COMPLETE SUB-LORD SEQUENCE FOR <span id="seq-nakshatra-name" class="uppercase">NAKSHATRA</span></h3>
+                        <span class="card-subtitle">Sequence starts from Nakshatra Lord</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="sequence-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Sub Lord</th>
+                                        <th>Vimshottari Yrs</th>
+                                        <th>Duration (Months)</th>
+                                        <th>Duration (Days)</th>
+                                        <th>Degree Span</th>
+                                        <th>Zodiac Degree Range</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sequence-table-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- 108 PADAS REFERENCE TABLE SECTION -->
+            <section class="card reference-section">
+                <div class="card-header flex-between">
+                    <div>
+                        <h2>COMPLETE 360° ZODIAC REFERENCE TABLE</h2>
+                        <span class="card-subtitle">27 Nakshatras • 108 Padas • 12 Rasis • Exact Boundaries</span>
+                    </div>
+                    <button type="button" id="toggle-ref-btn" class="btn btn-outline">
+                        Show Reference Table ▼
+                    </button>
+                </div>
+                
+                <div id="reference-table-wrapper" class="table-responsive hidden margin-top">
+                    <table class="reference-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nakshatra</th>
+                                <th>Lord</th>
+                                <th>Rasi(s)</th>
+                                <th>Pada 1 Range</th>
+                                <th>Pada 2 Range</th>
+                                <th>Pada 3 Range</th>
+                                <th>Pada 4 Range</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reference-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="main-footer">
+                <p>Vedic Astrology Sub-Lord Calculator • Pure In-Memory Frontend Engine</p>
+                <small>No client data stored. All calculations reset on page refresh.</small>
+                <p> Rights reserved for @ Shashaank Ammavajjala</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
